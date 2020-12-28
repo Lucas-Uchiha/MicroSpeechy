@@ -7,8 +7,18 @@ from audioplayer import AudioPlayer
 import time
 import uuid
 import os
+import gtts.tokenizer.symbols as sym
 
 
+# Add custom abbreviations for pt-br
+new_abbreviations = [
+    ("krl", "caralho"),
+    ("blz", "beleza"),
+    ("lib", "libe")
+]
+sym.SUB_PAIRS.extend(new_abbreviations)
+
+# Define sounds path and init mixer
 SOUNDS_PATH = "sounds"
 mixer.init(devicename="CABLE Input (VB-Audio Virtual Cable)")
 
