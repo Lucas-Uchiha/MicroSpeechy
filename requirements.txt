@@ -1,0 +1,11 @@
+audioplayer==0.6
+certifi==2020.12.5
+chardet==4.0.0
+click==7.1.2
+gTTS==2.2.1
+idna==2.10
+mutagen==1.45.1
+pygame==2.0.0.dev8
+requests==2.25.1
+six==1.15.0
+urllib3==1.26.2
