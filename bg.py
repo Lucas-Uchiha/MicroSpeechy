@@ -2,7 +2,7 @@
 from pygame import mixer  # Playing sound
 from gtts import gTTS
 from mutagen.mp3 import MP3
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Manager
 from audioplayer import AudioPlayer
 import time
 import uuid
@@ -24,9 +24,10 @@ mixer.init(devicename="CABLE Input (VB-Audio Virtual Cable)")
 
 
 class TaskHandler(Process):
-    def __init__(self, tasks: Queue):
+    def __init__(self, tasks: Queue, settings: Manager):
         super(TaskHandler, self).__init__()
         self.queue = tasks
+        self.settings = settings
         self._sound_list = []
         self.running = True
 
@@ -37,7 +38,7 @@ class TaskHandler(Process):
             item = self.queue.get()
             print(item)
             try:
-                path = text_to_voice(item)
+                path = text_to_voice(item, self.settings["lang"])
                 play_sound(path)
             except AssertionError:
                 print("deixa de zoar krl")
@@ -58,9 +59,9 @@ def play_sound(path=""):
     time.sleep(duration)        # wait until the end
 
 
-def text_to_voice(text=""):
+def text_to_voice(text="", language="pt-br"):
     file_name = f"{SOUNDS_PATH}/voice-{uuid.uuid4()}.mp3"
-    tts = gTTS(text, lang="pt-br")
+    tts = gTTS(text, lang=language)
     tts.save(file_name)
 
     return file_name
@@ -74,6 +75,13 @@ def create_sound_dir():
 def get_sound_duration(path):
     mp3 = MP3(path)
     return mp3.info.length
+
+
+def init_settings():
+    settings = Manager().dict()
+    settings["lang"] = "pt-br"
+
+    return settings
 
 
 def main():

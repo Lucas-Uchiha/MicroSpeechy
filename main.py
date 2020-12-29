@@ -1,5 +1,5 @@
-from multiprocessing import Queue
-from bg import TaskHandler, create_sound_dir
+from multiprocessing import Queue, Manager
+from bg import TaskHandler, create_sound_dir, init_settings
 from ui import Application
 
 
@@ -9,8 +9,9 @@ def main():
 
     # initialize UI and BG
     tasks = Queue()
-    handler = TaskHandler(tasks)
-    app = Application(tasks)
+    settings = init_settings()
+    handler = TaskHandler(tasks, settings)
+    app = Application(tasks, settings)
 
     # initialize processes
     handler.start()
