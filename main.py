@@ -1,4 +1,5 @@
-from multiprocessing import Queue, Manager
+import multiprocessing
+from multiprocessing import Queue
 from bg import TaskHandler, create_sound_dir, init_settings
 from ui import Application
 
@@ -22,5 +23,6 @@ def main():
 
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support()    # Allow pyinstaller use
     main()
 

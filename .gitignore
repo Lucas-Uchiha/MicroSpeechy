@@ -3,3 +3,7 @@ __pycache__/
 venv/
 sounds/
 other.py
+
+MicroSpeechy.spec
+build/
+dist/
