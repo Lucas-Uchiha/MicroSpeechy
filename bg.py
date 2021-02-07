@@ -1,6 +1,6 @@
 #from pygame._sdl2 import get_num_audio_devices, get_audio_device_name
 from pygame import mixer  # Playing sound
-from gtts import gTTS
+from gtts import gTTS, gTTSError
 from mutagen.mp3 import MP3
 from multiprocessing import Process, Queue, Manager
 from audioplayer import AudioPlayer
@@ -42,6 +42,8 @@ class TaskHandler(Process):
                 play_sound(path)
             except AssertionError:
                 print("deixa de zoar krl")
+            except gTTSError as err:
+                print(f"Error while saving file: \n{err.msg}")
 
     def stop(self):
         print("Stoping TaskHandler...")

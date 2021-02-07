@@ -2,8 +2,7 @@ from tkinter import Tk, ttk, Frame, END, BOTH, LEFT
 from multiprocessing import Queue, Manager
 
 LANGUAGES = [
-    "pt-br",
-    "pt-pt",
+    "pt",
     "en",
     "es",
     "fr",
