@@ -2,6 +2,7 @@
 __pycache__/
 venv/
 sounds/
+recs/
 other.py
 
 MicroSpeechy.spec

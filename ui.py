@@ -1,4 +1,4 @@
-from tkinter import Tk, ttk, Frame, END, BOTH, LEFT
+from tkinter import Tk, ttk, TOP, NW, SW, BOTTOM, X, SUNKEN, Label, Frame, END, BOTH, LEFT
 from multiprocessing import Queue, Manager
 
 LANGUAGES = [
@@ -19,9 +19,11 @@ class Application:
         self.window = Tk()
 
         # Create frames
-        self._frame1 = Frame(master=self.window, width=200, height=100, borderwidth=6)
-        self._frame2 = Frame(master=self.window, width=100, borderwidth=3)
-        self._frame3 = Frame(master=self.window, width=100, borderwidth=4)
+        self._main_frame = Frame(master=self.window)
+        self.bottom_frame = Frame(master=self.window)
+        self._frame1 = Frame(master=self._main_frame, width=200, height=100, borderwidth=6)
+        self._frame2 = Frame(master=self._main_frame, width=100, borderwidth=3)
+        self._frame3 = Frame(master=self._main_frame, width=100, borderwidth=4)
 
         # Create UI components
         self.text_box = ttk.Entry(self._frame1)
@@ -92,10 +94,13 @@ class Application:
         # Pack components
         self.text_box.pack(fill=BOTH)
         self.send_button.pack()
-        self._comboBox.pack()
+        self._comboBox.pack(fill=BOTH)
+
         self._frame1.pack(fill=BOTH, side=LEFT, expand=True)
         self._frame2.pack(fill=BOTH, side=LEFT, expand=False)
         self._frame3.pack(fill=BOTH, side=LEFT, expand=False)
+
+        self._main_frame.pack(fill=BOTH, side=TOP, anchor=NW)
 
         # Configure attributes
         self.window.resizable(height=False, width=True)     # Block window height resize
@@ -106,13 +111,3 @@ class Application:
         self.window.update()
         self.window.minsize(300, 30)
         self.window.mainloop()
-
-
-def test_ui():
-    q = Queue()
-    app = Application(q)
-    app.start()
-
-
-if __name__ == "__main__":
-    test_ui()

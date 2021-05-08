@@ -1,4 +1,3 @@
-#from pygame._sdl2 import get_num_audio_devices, get_audio_device_name
 from pygame import mixer  # Playing sound
 from gtts import gTTS, gTTSError
 from mutagen.mp3 import MP3
@@ -26,8 +25,8 @@ mixer.init(devicename="CABLE Input (VB-Audio Virtual Cable)")
 class TaskHandler(Process):
     def __init__(self, tasks: Queue, settings: Manager):
         super(TaskHandler, self).__init__()
-        self.queue = tasks
-        self.settings = settings
+        self.queue = tasks          # messages
+        self.settings = settings    # UI user configs
         self._sound_list = []
         self.running = True
 
@@ -35,7 +34,7 @@ class TaskHandler(Process):
         print("Starting TaskHandler")
 
         while self.running:
-            item = self.queue.get()
+            item = self.queue.get() # TODO: manda dicionario onde a chave descreve a tarefa ao inves de mandar diretamente o caminho
             print(item)
             try:
                 path = text_to_voice(item, self.settings["lang"])
@@ -84,15 +83,3 @@ def init_settings():
     settings["lang"] = "pt-br"
 
     return settings
-
-
-def main():
-    create_sound_dir()
-    tasks = Queue()
-    handler = TaskHandler(tasks)
-    handler.start()
-    handler.stop()
-
-
-if __name__ == '__main__':
-    main()
