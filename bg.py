@@ -3,6 +3,8 @@ from gtts import gTTS, gTTSError
 from mutagen.mp3 import MP3
 from multiprocessing import Process, Queue, Manager
 from audioplayer import AudioPlayer
+from utils import KEY_TYPE, KEY_VALUE, MSG, REC
+import glob
 import time
 import uuid
 import os
@@ -34,15 +36,23 @@ class TaskHandler(Process):
         print("Starting TaskHandler")
 
         while self.running:
-            item = self.queue.get() # TODO: manda dicionario onde a chave descreve a tarefa ao inves de mandar diretamente o caminho
+            item = self.queue.get()
             print(item)
-            try:
-                path = text_to_voice(item, self.settings["lang"])
+
+            if item[KEY_TYPE] == MSG:
+                try:
+                    text = item[KEY_VALUE]
+                    path = text_to_voice(text, self.settings["lang"])
+                    play_sound(path)
+                except AssertionError:
+                    print("deixa de zoar krl")
+                except gTTSError as err:
+                    print(f"Error while saving file: \n{err.msg}")
+            elif item[KEY_TYPE] == REC:
+                path = item[KEY_VALUE]
                 play_sound(path)
-            except AssertionError:
-                print("deixa de zoar krl")
-            except gTTSError as err:
-                print(f"Error while saving file: \n{err.msg}")
+            else:
+                print("Error in KEY_TYPE in bg.py method run().")
 
     def stop(self):
         print("Stoping TaskHandler...")
@@ -71,6 +81,16 @@ def text_to_voice(text="", language="pt-br"):
 def create_sound_dir():
     if not os.path.isdir(SOUNDS_PATH):
         os.mkdir(SOUNDS_PATH)
+
+
+def read_recs_dir():
+    res = []
+    data = glob.glob("recs/*.mp3")
+
+    for item in data:
+        res.append(item.replace("\\", "/"))
+
+    return res
 
 
 def get_sound_duration(path):
