@@ -86,10 +86,11 @@ def play_sound_local(duration, path=""):
 
 
 def stop_sound():
+    mixer.music.stop()
+
     if process["ref"] is not None:
         process["ref"].kill()
 
-    mixer.stop()
 
 
 def text_to_voice(text="", language="pt-br"):
