@@ -3,12 +3,13 @@ from gtts import gTTS, gTTSError
 from mutagen.mp3 import MP3
 from multiprocessing import Process, Queue, Manager
 from audioplayer import AudioPlayer
-from utils import KEY_TYPE, KEY_VALUE, MSG, REC
+from utils import KEY_TYPE, KEY_VALUE, MSG, REC, STOP
 import glob
 import time
 import uuid
 import os
 import gtts.tokenizer.symbols as sym
+import multiprocessing
 
 
 # Add custom abbreviations for pt-br
@@ -51,6 +52,8 @@ class TaskHandler(Process):
             elif item[KEY_TYPE] == REC:
                 path = item[KEY_VALUE]
                 play_sound(path)
+            elif item[KEY_TYPE] == STOP:
+                stop_sound()
             else:
                 print("Error in KEY_TYPE in bg.py method run().")
 
@@ -61,13 +64,32 @@ class TaskHandler(Process):
         self.join()
 
 
+process = {'ref': None}
+
+
 def play_sound(path=""):
     duration = get_sound_duration(path)
+
+    if process["ref"] is not None:
+        process["ref"].kill()
+
     mixer.music.load(path)      # Load the mp3
     mixer.music.play()
+    process["ref"] = multiprocessing.Process(target=play_sound_local, args=(duration, path,))
+    process["ref"].start()
+
+
+def play_sound_local(duration, path=""):
     player = AudioPlayer(path)  # play sound in local speakers
     player.play()
-    time.sleep(duration)        # wait until the end
+    time.sleep(duration)  # wait until the end
+
+
+def stop_sound():
+    if process["ref"] is not None:
+        process["ref"].kill()
+
+    mixer.stop()
 
 
 def text_to_voice(text="", language="pt-br"):

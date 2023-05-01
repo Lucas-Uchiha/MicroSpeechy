@@ -2,9 +2,13 @@ import multiprocessing
 from multiprocessing import Queue
 from bg import TaskHandler, create_sound_dir, read_recs_dir, init_settings
 from ui import Application
+from os import environ
 
 
 def main():
+    # hide duplicated "Hello from the pygame community" messages.
+    environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+
     # create sounds dir if it not exists
     create_sound_dir()
 

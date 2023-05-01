@@ -1,7 +1,7 @@
 from tkinter import Tk, ttk, TOP, NW, SW, BOTTOM, X, SUNKEN, Label, Frame, END, BOTH, LEFT, RAISED
 from multiprocessing import Queue, Manager
 from typing import List
-from utils import KEY_TYPE, KEY_VALUE, MSG, REC
+from utils import KEY_TYPE, KEY_VALUE, MSG, REC, STOP
 
 LANGUAGES = [
     "pt",
@@ -24,6 +24,7 @@ class Application:
         # Create frames
         self._main_frame = Frame(master=self.window)
         self.bottom_frame = Frame(master=self.window)
+        self.last_frame = Frame(master=self.window)
         self._frame1 = Frame(master=self._main_frame, width=200, height=100, borderwidth=6)
         self._frame2 = Frame(master=self._main_frame, width=100, borderwidth=3)
         self._frame3 = Frame(master=self._main_frame, width=100, borderwidth=4)
@@ -49,6 +50,12 @@ class Application:
         self.queue.put({
             KEY_TYPE: REC,
             KEY_VALUE: arg
+        })
+
+    def on_button_stop_click(self, event):
+        self.queue.put({
+            KEY_TYPE: STOP,
+            KEY_VALUE: None
         })
 
     def on_enter_key(self, event):
@@ -112,9 +119,11 @@ class Application:
         self._frame3.pack(fill=BOTH, side=LEFT, expand=False)
 
         self._render_recs_buttons()
+        self._render_last_frame_items()
 
         self._main_frame.pack(fill=BOTH, side=TOP, anchor=NW)
         self.bottom_frame.pack(fill=BOTH, side=BOTTOM, padx=5, pady=5)
+        self.last_frame.pack(fill=BOTH, side=BOTTOM, padx=5, pady=5)
 
         # Configure attributes
         self.window.resizable(height=False, width=True)     # Block window height resize
@@ -125,6 +134,20 @@ class Application:
         self.window.update()
         self.window.minsize(300, 30)
         self.window.mainloop()
+
+    def _render_last_frame_items(self):
+        self.last_frame.columnconfigure(0, weight=5)
+        self.last_frame.rowconfigure(0, weight=1)
+
+        frame = Frame(
+            master=self.last_frame,
+            borderwidth=1
+        )
+        frame.grid(row=0, column=0)
+
+        btn = ttk.Button(frame, text="Stop")
+        btn.bind("<Button-1>", lambda event: self.on_button_stop_click(event))
+        btn.pack()
 
     def _render_recs_buttons(self):
         if len(self.recs) < 4:

@@ -5,3 +5,4 @@ KEY_VALUE = "KEY_VALUE"
 # values
 MSG = "MSG"
 REC = "REC"
+STOP = "STOP"
